@@ -1,22 +1,26 @@
+import 'package:crud_flutter/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'main.dart';
+class EditData extends StatefulWidget {
+  final List list;
+  final int index;
+  EditData({this.list, this.index});
 
-class AddData extends StatefulWidget {
   @override
-  _AddDataState createState() => new _AddDataState();
+  _EditDataState createState() => _EditDataState();
 }
 
-class _AddDataState extends State<AddData> {
-  TextEditingController controllerCode = new TextEditingController();
-  TextEditingController controllerName = new TextEditingController();
-  TextEditingController controllerPrice = new TextEditingController();
-  TextEditingController controllerStock = new TextEditingController();
+class _EditDataState extends State<EditData> {
+  TextEditingController controllerCode;
+  TextEditingController controllerName;
+  TextEditingController controllerPrice;
+  TextEditingController controllerStock;
 
-  void addData(){
-    var url = "http://10.0.2.2/my_store/addData.php";
+  void editData() {
+    var url = "http://10.0.2.2/my_store/editData.php";
     http.post(url, body: {
+      "id": widget.list[widget.index]['id'],
       "item_code": controllerCode.text,
       "item_name": controllerName.text,
       "price": controllerPrice.text,
@@ -25,10 +29,19 @@ class _AddDataState extends State<AddData> {
   }
 
   @override
+  void initState() {
+    controllerCode = new TextEditingController(text: widget.list[widget.index]['item_code']);
+    controllerName = new TextEditingController(text: widget.list[widget.index]['item_name']);
+    controllerPrice = new TextEditingController(text: widget.list[widget.index]['price']);
+    controllerStock = new TextEditingController(text: widget.list[widget.index]['stock']);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("ADD DATA"),
+        title: new Text("EDIT DATA"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -66,14 +79,14 @@ class _AddDataState extends State<AddData> {
                 ),
                 new Padding(padding: const EdgeInsets.all(10.0)),
                 new RaisedButton(
-                  child: new Text("ADD DATA"),
+                  child: new Text("EDIT DATA"),
                   color: Colors.blueAccent,
                   onPressed: () {
-                    addData();
+                    editData();
                     Navigator.of(context).push(
-                        new MaterialPageRoute(
+                      new MaterialPageRoute(
                           builder: (BuildContext context) => new Home(),
-                        )
+                      )
                     );
                   },
                 )
@@ -85,3 +98,4 @@ class _AddDataState extends State<AddData> {
     );
   }
 }
+

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import './editData.dart';
+import 'main.dart';
 
 class Detail extends StatefulWidget {
   List list;
@@ -10,6 +13,41 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
+
+  void deleteData(){
+    var url = "http://10.0.2.2/my_store/deleteData.php";
+    http.post(url, body: {
+      "id": widget.list[widget.index]['id']
+    });
+  }
+  
+  void confirm() {
+    AlertDialog alertDialog = new AlertDialog(
+      content: new Text("Are You sure want to delete '${widget.list[widget.index]['item_name']}'"),
+      actions: <Widget>[
+        new RaisedButton(
+          child: new Text("YES"),
+          color: Colors.red,
+          onPressed: () {
+            deleteData();
+            Navigator.of(context).push(
+                new MaterialPageRoute(
+                  builder: (BuildContext context) => new Home(),
+                )
+            );
+          }
+        ),
+        new RaisedButton(
+          child: new Text("CANCEL"),
+          color: Colors.green,
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
+    );
+
+    showDialog(context: context, child: alertDialog);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -34,14 +72,18 @@ class _DetailState extends State<Detail> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new RaisedButton(
-                        child: new Text("EDIT"),
+                        child: new Text("EDIT", style: new TextStyle(color: Colors.white),),
                         color: Colors.green,
-                        onPressed: (){},
+                        onPressed: () => Navigator.of(context).push(
+                          new MaterialPageRoute(
+                              builder: (BuildContext context)  => new EditData(list: widget.list, index: widget.index,),
+                          )
+                        ),
                     ),
                     new RaisedButton(
-                      child: new Text("DELETE"),
+                      child: new Text("DELETE", style: new TextStyle(color: Colors.white),),
                       color: Colors.red,
-                      onPressed: (){},
+                      onPressed: () => confirm(),
                     )
                   ],
                 )
